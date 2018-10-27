@@ -1,6 +1,8 @@
 require 'gruff'
 require 'irb'
 
+require 'matplotlib/pyplot'
+
 lines = IO.readlines 'F51Reviews'
 values = []
 lines.map do |x|
@@ -33,9 +35,20 @@ limit10k.to_i.times do |i|
   trend.push(coefA + (coefB*Math.log(i)))
 end
 
-g = Gruff::Line.new
-g.hide_dots = true
-g.title = "Current: #{n}; 10K reached #{limit10k/n/4} months"
-g.data :Jimmy, values
-g.data :Trend, trend
-g.write('exciting.png')
+xs = []
+limit10k.to_i.times do |x|
+  xs.push x
+end
+
+plt = Matplotlib::Pyplot
+plt.plot (1..values.length).to_a, values
+#plt.plot (1..trend.length).to_a, trend
+plt.title "10K in months:  #{(limit10k/7/4).to_s}"
+
+plt.figure 1
+plt.plot (1..values.length).to_a, values
+
+plt.figure 2
+plt.plot (1..values.length).to_a, values
+plt.plot (1..trend.length).to_a, trend
+plt.show
